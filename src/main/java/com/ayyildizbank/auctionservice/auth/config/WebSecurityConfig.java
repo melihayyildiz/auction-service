@@ -38,7 +38,7 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(auth ->
                 auth
                     .requestMatchers("/api/**").permitAll()
-                    .requestMatchers("/h2-console**").permitAll()
+                    .requestMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated()
             );
         http.headers(headers -> headers.frameOptions(frameOption -> frameOption.sameOrigin()));
