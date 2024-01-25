@@ -29,7 +29,7 @@ public class Bid {
     @Column(nullable = false, updatable = false)
     private Long userId;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private BigDecimal amount;
 
     @Column(name = "created_date", nullable = false, updatable = false)

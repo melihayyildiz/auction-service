@@ -35,6 +35,7 @@ public class AuctionService {
         Auction auction = auctionRequest.toAuction(user);
         auction.setActive(true);
         auctionRepository.save(auction);
+        log.info("AuctionService.create auction {} is saved successfully", auction);
         return AuctionResponse.fromAuction(auction);
     }
 
@@ -54,11 +55,16 @@ public class AuctionService {
             log.warn("AuctionService.endAuction auction {} is already deactivated {}", auctionId, user.getUsername());
         }
 
+        log.info("AuctionService.endAuction auction {} is ended successfully", auction);
         return convertToAuctionResponse(auction);
     }
 
     public List<AuctionResponse> list() {
         return auctionRepository.findAll().stream().map(this::convertToAuctionResponse).toList();
+    }
+
+    public Optional<Auction> getAuction(Long auctionId) {
+        return auctionRepository.findById(auctionId);
     }
 
     private AuctionResponse convertToAuctionResponse(Auction auction) {

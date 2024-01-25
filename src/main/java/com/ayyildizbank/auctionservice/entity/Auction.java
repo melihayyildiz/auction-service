@@ -18,6 +18,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 @EntityListeners(AuditingEntityListener.class)
 public class Auction {
 
