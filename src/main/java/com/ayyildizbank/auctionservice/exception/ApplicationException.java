@@ -23,6 +23,11 @@ public class ApplicationException extends RuntimeException {
         this.messageArguments = messageArguments;
     }
 
+    public ApplicationException(ErrorResponse errorResponse) {
+        this.errorResponse = errorResponse;
+        this.messageArguments = null;
+    }
+
     @Override
     public String getMessage() {
         return errorResponse.getMessage();

@@ -46,7 +46,7 @@ public class GlobalExceptionHandler extends DefaultErrorAttributes {
         Locale locale = LocaleUtils.toLocale(request.getHeader("locale"));
         String error = "INSUFFICIENT_AUTHENTICATION";
         String msg = messageSource.getMessage(error, null, ex.getMessage(), Objects.isNull(locale) ? Locale.ENGLISH : locale );
-        return ofType(request, HttpStatus.FORBIDDEN, msg, null, null);
+        return ofType(request, HttpStatus.UNAUTHORIZED, msg, null, null);
     }
 
     @ExceptionHandler(HttpServerErrorException.InternalServerError.class)
@@ -73,9 +73,11 @@ public class GlobalExceptionHandler extends DefaultErrorAttributes {
     protected ResponseEntity<Map<String, Object>> ofType(WebRequest request, HttpStatus status, ApplicationException ex) {
         Locale locale = LocaleUtils.toLocale(request.getHeader("locale"));
 
-        Object[] objects = ex.getMessageArguments().values().toArray();
-        String msg = messageSource.getMessage(ex.getErrorResponse().getKey(), objects, ex.getMessage(), Objects.isNull(locale) ? Locale.ENGLISH : locale );
-
+        String msg = null;
+        if(!Objects.isNull(ex.getMessageArguments())){
+            Object[] objects = ex.getMessageArguments().values().toArray();
+            msg = messageSource.getMessage(ex.getErrorResponse().getKey(), objects, ex.getMessage(), Objects.isNull(locale) ? Locale.ENGLISH : locale );
+        }
         return ofType(request, status, (msg == null || msg.isBlank()) ? ex.getMessage() : msg,
             ex.getErrorResponse().getKey(), Collections.emptyList());
     }

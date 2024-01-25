@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -44,6 +45,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 user.getUsername(), null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             request.setAttribute("loggedInUser", user);
+        } else{
+            throw new InsufficientAuthenticationException("");
         }
         filterChain.doFilter(request, response);
     }

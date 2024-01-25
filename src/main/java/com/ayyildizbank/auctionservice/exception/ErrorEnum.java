@@ -3,7 +3,9 @@ package com.ayyildizbank.auctionservice.exception;
 import org.springframework.http.HttpStatus;
 
 public enum ErrorEnum implements ErrorResponse{
-    USERNAME_EXISTS( "USERNAME_EXISTS", HttpStatus.BAD_REQUEST, "Same username exists in the system"),
+    AUCTION_WITH_PRODUCT_EXISTS( "AUCTION_WITH_PRODUCT_EXISTS", HttpStatus.BAD_REQUEST, "An auction exists for this product"),
+    NO_PERMISSION( "NO_PERMISSION", HttpStatus.FORBIDDEN, "You do not have permission for this operation"),
+    AUCTION_DOES_NOT_EXIST( "AUCTION_DOES_NOT_EXIST", HttpStatus.BAD_REQUEST, "Auction does not exist"),
     EMAIL_EXISTS( "EMAIL_EXISTS",HttpStatus.BAD_REQUEST, "Same email exists in the system"),
     ROLE_DOES_NOT_EXIST( "ROLE_DOES_NOT_EXIST",HttpStatus.BAD_REQUEST, "Role does not exist");
 
