@@ -16,4 +16,4 @@ spring:
 app:
   jwt-secret: "IKnowInProductionEnvironmentYouAreGoingToUseSecretManagementOrUseAuthServerLikeKeycloackEtc"
 server:
-  port: 8081
+  port: 8082

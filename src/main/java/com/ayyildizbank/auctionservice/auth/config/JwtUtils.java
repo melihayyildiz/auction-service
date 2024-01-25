@@ -1,19 +1,21 @@
 package com.ayyildizbank.auctionservice.auth.config;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import com.ayyildizbank.auctionservice.auth.model.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Date;
 
 @Service
@@ -24,9 +26,13 @@ public class JwtUtils {
     @Value("${app.jwt-secret}")
     private String jwtSecret;
 
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(key()).build()
-            .parseClaimsJws(token).getBody().getSubject();
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    public User getUserFromJwtToken(String token) throws JsonProcessingException {
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String[] chunks = token.split("\\.");
+        String payload = new String(decoder.decode(chunks[1]));
+        return objectMapper.readValue(payload, User.class);
     }
 
     private Key key() {
@@ -49,19 +55,5 @@ public class JwtUtils {
         }
 
         return false;
-    }
-
-    public String generateJwt(UserDetailsImpl user) {
-        return Jwts.builder()
-            .subject(user.getUsername())
-            .claim("id", user.getId())
-            .claim("email", user.getEmail())
-            .claim("firstName", user.getFirstName())
-            .claim("lastName", user.getLastName())
-            .claim("username", user.getUsername())
-            .claim("roles", user.getAuthorities())
-            .issuedAt(new Date()).expiration(Date.from(Instant.ofEpochSecond(1737665520L))) // Melih: intentionally left like this
-            .signWith(key())
-            .compact();
     }
 }
