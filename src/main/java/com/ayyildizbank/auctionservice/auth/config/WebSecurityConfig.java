@@ -34,15 +34,13 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth ->
-                auth
-                    .requestMatchers("/api/**").permitAll()
-                    .requestMatchers("/h2-console/**").permitAll()
-                    .anyRequest().authenticated()
-            );
-        http.headers(headers -> headers.frameOptions(frameOption -> frameOption.sameOrigin()));
-        http.addFilterBefore(new AuthTokenFilter(jwtUtils), BasicAuthenticationFilter.class);
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/swagger-ui/**", "/api-docs", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(new AuthTokenFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

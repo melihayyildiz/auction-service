@@ -29,7 +29,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private static final Set<Pattern> excludedUrlPatterns = Set.of(
         Pattern.compile("/internal.*"),
         Pattern.compile("/_monitoring.*"),
-        Pattern.compile("/h2-console.*")
+        Pattern.compile("/h2-console.*"),
+        Pattern.compile("/swagger-ui.*"),
+        Pattern.compile("/v3/api-docs.*")
     );
 
     @Override
@@ -46,7 +48,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             request.setAttribute("loggedInUser", user);
         } else{
-            throw new InsufficientAuthenticationException("");
+            if(Pattern.compile("/api.*").matcher(request.getRequestURI()).matches()){
+                throw new InsufficientAuthenticationException("");
+            }
         }
         filterChain.doFilter(request, response);
     }
