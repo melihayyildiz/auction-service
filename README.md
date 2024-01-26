@@ -16,5 +16,5 @@ There are 2 locales, Turkish and English(default). If you want to change the loc
 
 Start with Auction Create request to create an auction (Only permitted to SELLER role)
 use Auction Bid request for bidding (Only permitted to BUYER role)
-Users can list Auctions, but only SELLER can display maxBid and maxBidHolder 
+Users can list Auctions, but only SELLER can display maxBid and maxBidHolder if it is still active. If not, both USER and SELLER can display
 When SELLER user ends auction with Auction End endpoint, s/he will get a response with maxBid and maxBidOwner info of that auction.

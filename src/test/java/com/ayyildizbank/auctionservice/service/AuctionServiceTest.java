@@ -146,7 +146,7 @@ class AuctionServiceTest {
     }
 
     @Test
-    void itShould_list_auctions_without_maxbid_when_role_is_not_seller() {
+    void itShould_list_auctions_without_maxbid_when_role_is_not_seller_and_auction_is_not_expired() {
         Auction auction1 = new Auction();
         auction1.setId(1L);
         auction1.setActive(true);

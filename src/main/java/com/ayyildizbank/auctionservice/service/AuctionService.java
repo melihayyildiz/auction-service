@@ -56,22 +56,21 @@ public class AuctionService {
         }
 
         log.info("AuctionService.endAuction auction {} is ended successfully", auction);
-        return convertToAuctionResponse(auction, true);
+        return convertToAuctionResponse(auction, user);
     }
 
     @Transactional
     public List<AuctionResponse> list(User user) {
-        boolean includeBid = user.getRoles().contains("ROLE_SELLER");
-        return auctionRepository.findAll().stream().map(auction -> convertToAuctionResponse(auction, includeBid)).toList();
+        return auctionRepository.findAll().stream().map(auction -> convertToAuctionResponse(auction, user)).toList();
     }
 
     public Optional<Auction> getAuction(Long auctionId) {
         return auctionRepository.findById(auctionId);
     }
 
-    private AuctionResponse convertToAuctionResponse(Auction auction, boolean includeBid) {
+    private AuctionResponse convertToAuctionResponse(Auction auction, User user) {
         AuctionResponse auctionResponse = AuctionResponse.fromAuction(auction);
-        if(includeBid){
+        if( !auction.isActive() || user.getRoles().contains("ROLE_SELLER")){
             Optional<Bid> max = auction.getBids().stream().max(Comparator.comparing((Bid::getAmount)).thenComparing(Bid::getLastModifiedDate));
             if (max.isPresent()) {
                 auctionResponse.setMaxBidOwner(max.get().getCreatedBy());
