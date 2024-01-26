@@ -36,3 +36,6 @@ Users can list Auctions, but only SELLER can display `maxBid` and `maxBidHolder`
 
 ## Auction End
 When a SELLER user ends an auction with the Auction End endpoint, they will receive a response with `maxBid` and `maxBidOwner` info of that auction.
+
+## Tests
+Tests are located under src/test folder
