@@ -1,25 +1,38 @@
-# auction-service
-This service caters to auction events
+# Auction Service
 
-You can use Login and Signup requests on the attached postman file (Melih-v1.postman_collection.json), located under root directory 
-After signup with user, and get token, you can consume Auction Service endpoints based on the role of the user. Check user-role service Readme file for further info.
+This service caters to auction events.
 
-Default Port: 8082 Also, swagger is available on http://localhost:8082/swagger-ui/index.html
+## Postman Collection
+You can use the Login and Signup requests provided in the attached Postman file (`Melih-v1.postman_collection.json`), located under the root directory. After signing up with a user and obtaining a token, you can consume Auction Service endpoints based on the user's role. Check the `user-role` service README file for further information.
 
-Api version is v1, and it is provided by Accept header "application/vnd.melih.api.v1+json"
+## Default Port
+Default Port: 8082
 
-H2 database is available on http://localhost:8082/h2-console/ via username:sa and password:password
+## Swagger
+Swagger is available on [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html)
 
-Authorization header must be added to request, and it must include a JWT token, signed by the user-service
+## API Version
+Api version is v1, and it is provided by the Accept header `application/vnd.melih.api.v1+json`.
 
-There are 2 locales, Turkish and English(default). If you want to change the locale, simply add Locale(en or tr) header to your requests.
+## H2 Database
+H2 database is available on [http://localhost:8082/h2-console/](http://localhost:8082/h2-console/) with the following credentials:
+- Username: sa
+- Password: password
 
-Start with Auction Create request to create an auction (Only permitted to SELLER role).
+## Authorization
+Authorization header must be added to the request, and it must include a JWT token signed by the user-service.
 
-Auction Create body takes 2 arguments, productId and minBid. There is no product entity implemented, so put a casual identifier instead.
+## Locales
+There are 2 locales: Turkish and English (default). To change the locale, simply add a `Locale` header to your requests with values `en` or `tr`.
 
-Use Auction Bid request for bidding (Only permitted to BUYER role).
+## Getting Started
+Start with the Auction Create request to create an auction (Only permitted to SELLER role). Auction Create body takes 2 arguments: `productId` and `minBid`. There is no product entity implemented, so put a casual identifier instead.
 
-Users can list Auctions, but only SELLER can display maxBid and maxBidHolder if it is still active. If not, both USER and SELLER can display.
+## Bidding
+Use the Auction Bid request for bidding (Only permitted to BUYER role).
 
-When SELLER user ends auction with Auction End endpoint, s/he will get a response with maxBid and maxBidOwner info of that auction.
+## Auction Listing
+Users can list Auctions, but only SELLER can display `maxBid` and `maxBidHolder` if it is still active. If not, both USER and SELLER can display.
+
+## Auction End
+When a SELLER user ends an auction with the Auction End endpoint, they will receive a response with `maxBid` and `maxBidOwner` info of that auction.
