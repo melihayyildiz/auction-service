@@ -1,10 +1,8 @@
 package com.ayyildizbank.auctionservice.controller;
 
 import com.ayyildizbank.auctionservice.auth.model.User;
-import com.ayyildizbank.auctionservice.payload.request.AuctionRequest;
 import com.ayyildizbank.auctionservice.payload.request.BidRequest;
 import com.ayyildizbank.auctionservice.payload.response.CustomResponse;
-import com.ayyildizbank.auctionservice.service.AuctionService;
 import com.ayyildizbank.auctionservice.service.BidService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

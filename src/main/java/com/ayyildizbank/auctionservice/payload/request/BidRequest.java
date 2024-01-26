@@ -1,7 +1,6 @@
 package com.ayyildizbank.auctionservice.payload.request;
 
 import com.ayyildizbank.auctionservice.auth.model.User;
-import com.ayyildizbank.auctionservice.entity.Auction;
 import com.ayyildizbank.auctionservice.entity.Bid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;

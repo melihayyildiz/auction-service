@@ -1,18 +1,15 @@
 package com.ayyildizbank.auctionservice.payload.response;
 
-import com.ayyildizbank.auctionservice.entity.Auction;
 import com.ayyildizbank.auctionservice.entity.Bid;
-import com.ayyildizbank.auctionservice.payload.request.BidRequest;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BidResponse {
     public Long id;
     public long auctionId;

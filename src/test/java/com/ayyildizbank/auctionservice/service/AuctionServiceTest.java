@@ -3,11 +3,9 @@ package com.ayyildizbank.auctionservice.service;
 import com.ayyildizbank.auctionservice.auth.model.User;
 import com.ayyildizbank.auctionservice.entity.Auction;
 import com.ayyildizbank.auctionservice.entity.Bid;
-import com.ayyildizbank.auctionservice.exception.ApplicationException;
 import com.ayyildizbank.auctionservice.exception.ErrorEnum;
 import com.ayyildizbank.auctionservice.payload.request.AuctionRequest;
 import com.ayyildizbank.auctionservice.payload.response.AuctionResponse;
-import com.ayyildizbank.auctionservice.payload.response.CustomResponse;
 import com.ayyildizbank.auctionservice.repository.AuctionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +16,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
