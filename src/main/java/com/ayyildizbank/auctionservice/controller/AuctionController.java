@@ -36,7 +36,7 @@ public class AuctionController {
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<CustomResponse> list(@RequestAttribute User loggedInUser) {
         log.info("AuctionController.create auction list request by {}", loggedInUser.getUsername());
-        return ResponseEntity.ok(CustomResponse.success(auctionService.list()));
+        return ResponseEntity.ok(CustomResponse.success(auctionService.list(loggedInUser)));
     }
 
 

@@ -56,23 +56,27 @@ public class AuctionService {
         }
 
         log.info("AuctionService.endAuction auction {} is ended successfully", auction);
-        return convertToAuctionResponse(auction);
+        return convertToAuctionResponse(auction, true);
     }
 
-    public List<AuctionResponse> list() {
-        return auctionRepository.findAll().stream().map(this::convertToAuctionResponse).toList();
+    @Transactional
+    public List<AuctionResponse> list(User user) {
+        boolean includeBid = user.getRoles().contains("ROLE_SELLER");
+        return auctionRepository.findAll().stream().map(auction -> convertToAuctionResponse(auction, includeBid)).toList();
     }
 
     public Optional<Auction> getAuction(Long auctionId) {
         return auctionRepository.findById(auctionId);
     }
 
-    private AuctionResponse convertToAuctionResponse(Auction auction) {
+    private AuctionResponse convertToAuctionResponse(Auction auction, boolean includeBid) {
         AuctionResponse auctionResponse = AuctionResponse.fromAuction(auction);
-        Optional<Bid> max = auction.getBids().stream().max(Comparator.comparing((Bid::getAmount)).thenComparing(Bid::getLastModifiedDate));
-        if (max.isPresent()) {
-            auctionResponse.setMaxBidOwner(max.get().getCreatedBy());
-            auctionResponse.setMaxBid(max.get().getAmount());
+        if(includeBid){
+            Optional<Bid> max = auction.getBids().stream().max(Comparator.comparing((Bid::getAmount)).thenComparing(Bid::getLastModifiedDate));
+            if (max.isPresent()) {
+                auctionResponse.setMaxBidOwner(max.get().getCreatedBy());
+                auctionResponse.setMaxBid(max.get().getAmount());
+            }
         }
         return auctionResponse;
     }
