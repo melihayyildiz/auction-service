@@ -33,7 +33,6 @@ public class AuctionController {
     }
 
     @GetMapping(produces = "application/vnd.melih.api.v1+json")
-    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<CustomResponse> list(@RequestAttribute User loggedInUser) {
         log.info("AuctionController.create auction list request by {}", loggedInUser.getUsername());
         return ResponseEntity.ok(CustomResponse.success(auctionService.list(loggedInUser)));
