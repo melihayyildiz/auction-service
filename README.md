@@ -14,7 +14,12 @@ Authorization header must be added to request, and it must include a JWT token, 
 
 There are 2 locales, Turkish and English(default). If you want to change the locale, simply add Locale(en or tr) header to your requests.
 
-Start with Auction Create request to create an auction (Only permitted to SELLER role)
-use Auction Bid request for bidding (Only permitted to BUYER role)
-Users can list Auctions, but only SELLER can display maxBid and maxBidHolder if it is still active. If not, both USER and SELLER can display
+Start with Auction Create request to create an auction (Only permitted to SELLER role).
+
+Auction Create body takes 2 arguments, productId and minBid. There is no product entity implemented, so put a casual identifier instead.
+
+Use Auction Bid request for bidding (Only permitted to BUYER role).
+
+Users can list Auctions, but only SELLER can display maxBid and maxBidHolder if it is still active. If not, both USER and SELLER can display.
+
 When SELLER user ends auction with Auction End endpoint, s/he will get a response with maxBid and maxBidOwner info of that auction.
