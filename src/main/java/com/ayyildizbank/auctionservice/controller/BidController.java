@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,8 +24,9 @@ public class BidController {
 
     @PostMapping(produces = "application/vnd.melih.api.v1+json")
     @PreAuthorize("hasRole('BUYER')")
-    public ResponseEntity<CustomResponse> create(@Valid @RequestBody BidRequest bidRequest, @RequestAttribute User loggedInUser) {
-        log.info("BidController.create bid create request by {} as {}", loggedInUser.getUsername(), bidRequest.toString());
-        return ResponseEntity.ok(CustomResponse.success(bidService.create(bidRequest,loggedInUser)));
+    public ResponseEntity<CustomResponse> create(@Valid @RequestBody BidRequest bidRequest, Authentication authentication) {
+        User user = ((User)authentication.getPrincipal());
+        log.info("BidController.create bid create request by {} as {}", user.getUsername(), bidRequest.toString());
+        return ResponseEntity.ok(CustomResponse.success(bidService.create(bidRequest,user)));
     }
 }

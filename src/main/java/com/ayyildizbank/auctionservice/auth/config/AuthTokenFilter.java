@@ -44,9 +44,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 = AuthorityUtils.createAuthorityList(user.getRoles());
             PreAuthenticatedAuthenticationToken authentication
                 = new PreAuthenticatedAuthenticationToken(
-                user.getUsername(), null, authorities);
+                user, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            request.setAttribute("loggedInUser", user);
         } else{
             if(Pattern.compile("/api.*").matcher(request.getRequestURI()).matches()){
                 throw new InsufficientAuthenticationException("");
