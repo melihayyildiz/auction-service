@@ -17,19 +17,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     private JwtUtils jwtUtils;
-
-    private static final Set<Pattern> excludedUrlPatterns = Set.of(
-        Pattern.compile("/internal.*"),
-        Pattern.compile("/_monitoring.*"),
-        Pattern.compile("/h2-console.*"),
-        Pattern.compile("/swagger-ui.*"),
-        Pattern.compile("/v3/api-docs.*")
-    );
+    private List<String> excludeUrls;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -53,8 +47,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return excludedUrlPatterns
-            .stream()
+        return excludeUrls.stream().map(Pattern::compile).collect(Collectors.toSet()).
+            stream()
             .anyMatch(pattern -> pattern.matcher(request.getRequestURI()).matches());
     }
 

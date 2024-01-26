@@ -29,44 +29,60 @@ public class BidService {
 
     @Transactional
     public BidResponse create(BidRequest bidRequest, User loggedInUser) {
-        Auction auction = auctionService.getAuction(bidRequest.getAuctionId()).orElseThrow(() -> new ApplicationException(AUCTION_DOES_NOT_EXIST, Map.of("auctionId", bidRequest.getAuctionId())));
-
-        if (!auction.isActive()) {
-            log.error("BidService.create user {} is trying to bid auction {} with bid {} but auction is already over", loggedInUser.getUsername(), bidRequest.getAuctionId(), bidRequest.getBidAmount());
-            throw new ApplicationException(AUCTION_IS_OVER, Map.of("auctionId", bidRequest.getAuctionId()));
-        }
-
-        if (auction.getMinBid().compareTo(bidRequest.getBidAmount()) > 0) {
-            log.error("BidService.create user {} is trying to bid auction {} with bid {} but it is below minimum bid", loggedInUser.getUsername(), bidRequest.getAuctionId(), bidRequest.getBidAmount());
-            throw new ApplicationException(BELOW_MIN_BID, Map.of("minimumBid", auction.getMinBid()));
-        }
-
-        Optional<Bid> maxBid = getMaxBid(auction);
-        if (maxBid.isPresent() && maxBid.get().getAmount().compareTo(bidRequest.getBidAmount()) > -1) {
-            log.error("BidService.create user {} is trying to bid auction {} with bid {} but it is not the max bid", loggedInUser.getUsername(), bidRequest.getAuctionId(), bidRequest.getBidAmount());
-            throw new ApplicationException(NOT_MAX_BID, Map.of("maxBid", maxBid.get().getAmount()));
-        }
-
-        Bid toSave = new Bid();
-        Optional<Bid> existingBid = bidRepository.findBidByAuctionIdAndUserId(bidRequest.getAuctionId(), loggedInUser.getId());
-        if (existingBid.isPresent()) {
-            toSave = existingBid.get();
-        } else {
-            toSave.setCreatedBy(loggedInUser.getUsername());
-            toSave.setAuctionId(auction.getId());
-            toSave.setUserId(loggedInUser.getId());
-        }
-        toSave.setAmount(bidRequest.getBidAmount());
+        Auction auction = validateAndGetAuction(bidRequest.getAuctionId(), loggedInUser);
+        validateBidAmount(auction, bidRequest, loggedInUser);
+        Bid toSave = prepareBid(auction, bidRequest, loggedInUser);
         bidRepository.save(toSave);
         return BidResponse.fromBid(toSave);
+    }
 
+    private Auction validateAndGetAuction(Long auctionId, User loggedInUser) {
+        Auction auction = auctionService.getAuction(auctionId)
+            .orElseThrow(() -> new ApplicationException(AUCTION_DOES_NOT_EXIST, Map.of("auctionId", auctionId)));
+        if (!auction.isActive()) {
+            log.error("BidService.create user {} is trying to bid auction {} auction is already over", loggedInUser.getUsername(), auctionId);
+            throw new ApplicationException(AUCTION_IS_OVER, Map.of("auctionId", auctionId));
+        }
+        return auction;
+    }
 
+    private void validateBidAmount(Auction auction, BidRequest bidRequest, User loggedInUser) {
+        if (auction.getMinBid().compareTo(bidRequest.getBidAmount()) > 0) {
+            throw new ApplicationException(BELOW_MIN_BID, Map.of("minimumBid", auction.getMinBid()));
+        }
+        getMaxBid(auction).ifPresent(maxBid -> {
+            if (maxBid.getAmount().compareTo(bidRequest.getBidAmount()) > -1) {
+                throw new ApplicationException(NOT_MAX_BID, Map.of("maxBid", maxBid.getAmount()));
+            }
+        });
+    }
+
+    private Bid prepareBid(Auction auction, BidRequest bidRequest, User loggedInUser) {
+        return bidRepository.findBidByAuctionIdAndUserId(bidRequest.getAuctionId(), loggedInUser.getId())
+            .map(bid -> updateExistingBid(bid, bidRequest))
+            .orElseGet(() -> createNewBid(auction, bidRequest, loggedInUser));
+    }
+
+    private Bid updateExistingBid(Bid bid, BidRequest bidRequest) {
+        bid.setAmount(bidRequest.getBidAmount());
+        return bid;
+    }
+
+    private Bid createNewBid(Auction auction, BidRequest bidRequest, User loggedInUser) {
+        Bid newBid = new Bid();
+        newBid.setCreatedBy(loggedInUser.getUsername());
+        newBid.setAuctionId(auction.getId());
+        newBid.setUserId(loggedInUser.getId());
+        newBid.setAmount(bidRequest.getBidAmount());
+        return newBid;
     }
 
     private Optional<Bid> getMaxBid(Auction auction) {
         if (Objects.isNull(auction.getBids())) {
             return Optional.empty();
         }
-        return auction.getBids().stream().max(Comparator.comparing((Bid::getAmount)).thenComparing(Bid::getLastModifiedDate));
+        return auction.getBids().stream()
+            .max(Comparator.comparing(Bid::getAmount).thenComparing(Bid::getLastModifiedDate));
     }
 }
+
